@@ -1,34 +1,37 @@
-const mongoose = require("mongoose");
-mongoose.set("useFindAndModify", false);
-const uniqueValidator = require("mongoose-unique-validator");
+/* eslint-disable no-underscore-dangle */
+const mongoose = require('mongoose');
+
+mongoose.set('useFindAndModify', false);
+const uniqueValidator = require('mongoose-unique-validator');
 
 const personSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, "User name required"],
+    required: [true, 'User name required'],
     unique: true,
     uniqueCaseInsensitive: true,
-    min: 3
+    min: 3,
   },
   number: {
     type: Number,
-    required: [true, "User phone number required"],
-    
+    required: [true, 'User phone number required'],
+
     unique: true,
-    id: Number
-  }
+    id: Number,
+  },
 });
 
-personSchema.set("toJSON", {
-  transform: (document, returnedObject) => {
+personSchema.set('toJSON', {
+  transform: (document, returnOb) => {
+    const returnedObject = returnOb;
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
     delete returnedObject.__v;
-  }
+  },
 });
 
 personSchema.plugin(uniqueValidator, {
-  message: "Error, expected {PATH} to be unique."
+  message: 'Error, expected {PATH} to be unique.',
 });
 
-module.exports = mongoose.model("Person", personSchema);
+module.exports = mongoose.model('Person', personSchema);
