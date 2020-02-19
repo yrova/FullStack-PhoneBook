@@ -1,72 +1,72 @@
-const peopleRouter = require("express").Router();
-const infoRouter = require("express").Router();
-const PERSON = require("../models/person");
+const peopleRouter = require('express').Router();
+const infoRouter = require('express').Router();
+const PERSON = require('../models/person');
 
-peopleRouter.post("/", (request, response, next) => {
-  const body = request.body;
-  const phoneNumber = parseInt(body.number.replace(/-/, ""));
+peopleRouter.post('/', (request, response, next) => {
+  const { body } = request;
+  const phoneNumber = parseInt(body.number.replace(/-/, ''), 10);
 
   const person = new PERSON({
     name: body.name,
-    number: phoneNumber
+    number: phoneNumber,
   });
 
   person
     .save()
-    .then(savedPerson => savedPerson.toJSON())
-    .then(savedAndFormattedPerson => {
+    .then((savedPerson) => savedPerson.toJSON())
+    .then((savedAndFormattedPerson) => {
       response.json(savedAndFormattedPerson);
     })
-    .catch(error => next(error));
+    .catch((error) => next(error));
 });
 
-peopleRouter.get("/", (request, response, next) => {
-  PERSON.find({}).then(persons => {
-    response.json(persons.map(person => person.toJSON()));
+peopleRouter.get('/', (request, response) => {
+  PERSON.find({}).then((persons) => {
+    response.json(persons.map((person) => person.toJSON()));
   });
 });
 
-peopleRouter.get("/:id", (request, response, next) => {
+peopleRouter.get('/:id', (request, response, next) => {
   PERSON.findById(request.params.id)
-    .then(person => {
+    .then((person) => {
       response.json(person.toJSON());
     })
-    .catch(error => next(error));
+    .catch((error) => next(error));
 });
 
-peopleRouter.delete("/:id", (request, response, next) => {
+peopleRouter.delete('/:id', (request, response, next) => {
   PERSON.findByIdAndRemove(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end();
     })
-    .catch(error => next(error));
+    .catch((error) => next(error));
 });
 
-peopleRouter.put("/:id", (request, response, next) => {
-  const body = request.body;
+peopleRouter.put('/:id', (request, response, next) => {
+  const { body } = request;
 
   const person = {
     name: body.name,
-    number: body.number
+    number: body.number,
   };
 
   PERSON.findByIdAndUpdate(request.params.id, person, { new: true })
-    .then(updatedPerson => {
+    .then((updatedPerson) => {
       response.json(updatedPerson.toJSON());
     })
-    .catch(error => next(error));
+    .catch((error) => next(error));
 });
 
-infoRouter.get("/info", (req, res) => {
+infoRouter.get('/info', (req, res) => {
   const currentDate = new Date();
-  PERSON.estimatedDocumentCount().then(count => {
-    let peoplePerson = count === 1 ? "person" : "people";
-    res.setHeader("Content-type", "text/html");
+  PERSON.estimatedDocumentCount().then((count) => {
+    const peoplePerson = count === 1 ? 'person' : 'people';
+    res.setHeader('Content-type', 'text/html');
     res.send(
       `
     <p>Phonebook has ${count} ${peoplePerson}</p>
     <p>${currentDate}</p>
-    `
+    `,
     );
   });
 });

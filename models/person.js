@@ -11,13 +11,14 @@ const personSchema = new mongoose.Schema({
     unique: true,
     uniqueCaseInsensitive: true,
     min: 3,
+    max: 30,
   },
   number: {
-    type: Number,
+    type: String,
     required: [true, 'User phone number required'],
-
+    min: 10,
+    max: 11,
     unique: true,
-    id: Number,
   },
 });
 
